@@ -42,7 +42,7 @@ Run the following to create BERT embedding files required for the training proce
 You can specify the parameters according to your design choices in `scripts/train.py`
 
 ### Command
-`python train.py --with_bert --epochs 20 --save_dir saved_${name} --z_dim 256 --z_dim_1 256`
+`python train_<dataset>.py --with_bert --epochs 20 --save_dir saved_${name} --z_dim 256 --z_dim_1 256`
 
 ###  Output
 The directory `saved_${name}` contains the checkpoints:
