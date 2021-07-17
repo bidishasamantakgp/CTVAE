@@ -11,15 +11,17 @@ The following directories provides scripts for CTVAE
 - `scripts/sample_post.py` Run this code to sample sentences from posterior
 - `scripts/sample_interpolation.py` Run this code for fine tuned sample generation
 
-### Prerequisite
-- `conda env create -f environment.yml`
+### Prerequisites
+- `pytorch 1.4.0`
+- `pytorch-pretrained-bert 0.6.2`
+- `spacy 3.1.0`
+- `python -m spacy download en_core_web_sm`
 
 ### Dataset
-Download the dataset from [here](https://drive.google.com/file/d/1QifmA1YUTWA97g53UO-843BwlGhPOlMW/view?usp=sharing) and decompress it.
+Download the yelp dataset from [here](https://drive.google.com/drive/folders/1P5zUZ1XNq4642hSc8sU_Yy-veMInC-Ca?usp=sharing).
 
-  `tar xzf data.tar.gz`
 
-It will create following files
+It has following files
 
 - `.data/${name}/${name}/train/data.txt`
 - `.data/${name}/${name}/train/labels.txt`
