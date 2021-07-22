@@ -7,12 +7,8 @@ from torchtext import data
 
 class Amazon(data.Dataset):
 
-    #name = 'yelp_new'
-    #dirname = 'yelp_new'
     name = 'amazon'
     dirname = 'amazon'
-    #name = 'amazon_tense'
-    #dirname = 'amazon_tense'
     @staticmethod
     def sort_key(ex):
         return len(ex.text)
@@ -32,11 +28,6 @@ class Amazon(data.Dataset):
 
         sentences = open(os.path.join(path, 'data.txt'))
         labels = open(os.path.join(path, 'labels.txt'))
-        # for label in ['pos', 'neg']:
-        #     for fname in glob.iglob(os.path.join(path, label, '*.txt')):
-        #         with io.open(fname, 'r', encoding="utf-8") as f:
-        #             text = f.readline()
-        #         examples.append(data.Example.fromlist([text, label], fields))
         count = 0
         for _sent, _label in zip(sentences, labels):
             examples.append(data.Example.fromlist([_sent, _label, count], fields))

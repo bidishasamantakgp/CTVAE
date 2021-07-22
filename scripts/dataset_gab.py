@@ -7,12 +7,8 @@ from torchtext import data
 
 class Gab(data.Dataset):
 
-    #name = 'yelp_new'
-    #dirname = 'yelp_new'
     name = 'gab'
     dirname = 'gab'
-    #name = 'amazon_tense'
-    #dirname = 'amazon_tense'
     @staticmethod
     def sort_key(ex):
         return len(ex.text)

@@ -7,12 +7,8 @@ from torchtext import data
 
 class Music(data.Dataset):
 
-    #name = 'yelp_new'
-    #dirname = 'yelp_new'
     name = 'music'
     dirname = 'music'
-    #name = 'amazon_tense'
-    #dirname = 'amazon_tense'
     
     @staticmethod
     def sort_key(ex):

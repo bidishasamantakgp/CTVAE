@@ -7,12 +7,8 @@ from torchtext import data
 
 class Family(data.Dataset):
 
-    #name = 'yelp_new'
-    #dirname = 'yelp_new'
     name = 'family'
     dirname = 'family'
-    #name = 'amazon_tense'
-    #dirname = 'amazon_tense'
     @staticmethod
     def sort_key(ex):
         return len(ex.text)
