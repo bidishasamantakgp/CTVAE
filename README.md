@@ -6,7 +6,7 @@ The following directories provides scripts for CTVAE
 - `scripts`   Contains files for training and sampling sentences
 - `evaluation_scripts` Contains files for evaluation of the sampled sentences
 - `scripts/BERT.py` Run this code to generate sentence embeddings using BERT-base-uncased pretrained model
-- `scripts/train_<dataset_name>.py`  This is the main file to train the model
+- `scripts/train_datasets.py`  This is the main file to train the model
 - `scripts/sample_prior.py`  Run this code to sample sentences from prior
 - `scripts/sample_post.py` Run this code to sample sentences from posterior
 - `scripts/sample_interpolation.py` Run this code for fine tuned sample generation
@@ -20,6 +20,7 @@ The following directories provides scripts for CTVAE
 
 ### Dataset
 Download the yelp dataset from [here](https://drive.google.com/drive/folders/1P5zUZ1XNq4642hSc8sU_Yy-veMInC-Ca?usp=sharing).
+Please download other opensource datasets and cite them appropriately. 
 
 
 It has following files
