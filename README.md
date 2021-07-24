@@ -5,7 +5,7 @@ The following directories provides scripts for CTVAE
 
 - `scripts`   Contains files for training and sampling sentences
 - `evaluation_scripts` Contains files for evaluation of the sampled sentences
-- `scripts/BERT.py` Run this code to generate sentence embeddings using BERT-base-uncased pretrained model
+- `scripts/BERT_embedding_gpu.py` Run this code to generate sentence embeddings using BERT-base-uncased pretrained model
 - `scripts/train_datasets.py`  This is the main file to train the model
 - `scripts/sample_prior.py`  Run this code to sample sentences from prior
 - `scripts/sample_post.py` Run this code to sample sentences from posterior
@@ -36,9 +36,9 @@ It has following files
 Run the following to create BERT embedding files required for the training process.
   ```bash
     mkdir ./BERT
-    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/train/data.txt ./BERT/${name}_train.pt
-    python scripts/BERT_embeeding_gpu.py .data/${name}/${name}/val/data.txt ./BERT/${name}_val.pt
-    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/test/data.txt ./BERT/${name}_test.pt
+    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/train/data.txt .BERT/${name}_train.pt
+    python scripts/BERT_embeeding_gpu.py .data/${name}/${name}/val/data.txt .BERT/${name}_val.pt
+    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/test/data.txt .BERT/${name}_test.pt
   ```
 
 ## Training the model
