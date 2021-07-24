@@ -62,7 +62,7 @@ if __name__=="__main__":
         #if count == 128:
         #    break
     print(len(s_e_list))
-    torch.save(torch.stack(s_e_list), sys.argv[2] + 'sentence.pt')
+    torch.save(torch.stack(s_e_list), sys.argv[2])
     #torch.save(s_e, 'sentence-10.pt')
     #torch.save(w_e, 'word-10.pt')
 
