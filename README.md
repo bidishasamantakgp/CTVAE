@@ -46,7 +46,7 @@ Run the following to create BERT embedding files required for the training proce
 You can specify the parameters according to your design choices in `scripts/train_datasets.py`
 
 ### Command
-`python scripts/train_datasets.py --with_bert --epochs 20 --data <name> --save_dir <output dir> --z_dim 256 --z_dim_1 256`
+`python scripts/train_datasets.py --with_bert --epochs 20 --data ${name} --save_dir output_${name} --z_dim 256 --z_dim_1 256`
 ###  Output
 The directory `saved_${name}` contains the checkpoints:
 - `vae.bin` stores the checkpoint state
