@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument('--data', default='yelp',
                     help='name of dataset yelp, amazon. imdb')
-parser.add_argument('--bert', default='../BERT',
+parser.add_argument('--bert', default='.BERT',
                     help='name of bert embedding folder')
 parser.add_argument('--gpu', default=True, action='store_true',
                     help='whether to run in the GPU')
@@ -37,10 +37,10 @@ parser.add_argument('--with_bert', default=False, action='store_true',
                     help='if with bert sentence encodings')
 parser.add_argument('--entire_z', default=False, action='store_true',
                     help='for feature dim')
-
+parser.add_argument('--output_dir', default='output_yelp')
 parser.add_argument('--h_dim', default=200, type=int,
                     help='encoder convertion')
-parser.add_argument('--h_dim_1', default=200, type=int,
+parser.add_argument('--h_dim_1', default=100, type=int,
                     help='hidden dimension of fetaure layer')
 parser.add_argument('--z_dim', default=128, type=int,
                     help='whether to save model or not')
@@ -56,17 +56,15 @@ parser.add_argument('--beta1_D', default=0.5, type=float,
                     help='beta1 parameter of the Adam optimizer for the discriminator')
 parser.add_argument('--beta2_D', default=0.9, type=float,
                     help='beta2 parameter of the Adam optimizer for the discriminator')
-parser.add_argument("--mbsize", default=20, type=int)
-parser.add_argument("--flows", default=2, type=int)
-parser.add_argument("--flow", default="MAF", type=str)
 
+parser.add_argument("--flows", default=2, type=int)
+#parser.add_argument("--flow", default="MAF", type=str)
+parser.add_argument("--flow", default="RealNVP", type=str)
+parser.add_argument("--mbsize", default=128, type=int,
+                    help='encoder convertion')
 args = parser.parse_args()
 with_bert=args.with_bert
 
-# if args.entire_z:
-#   from model2 import RNN_VAE, Discriminator
-# else:
-#   from model import RNN_VAE, Discriminator
 
 lr = 0.001
 lr_D = 1e-3
@@ -77,22 +75,51 @@ log_interval = 320
 device = 'cuda' if args.gpu else 'cpu'
 mb_size = args.mbsize
 
-if args.data.lower() == 'imdb':
-  dataset = Imdb_Dataset()
-  MODEL_DIR = 'models_imdb/'
+if args.data.lower() == 'amazon':
+  print('using data amazon')
+  dataset = Amazon_Dataset(mbsize=mb_size, label = 2,  repeat=False,shuffle=False)
+  MODEL_DIR = 'models_amazon/'
+  train_size = 554997
+  val_size = 2000
+  test_size = 1000
+
 if args.data.lower() == 'yelp':
-  dataset = Yelp_Dataset(mbsize=mb_size, repeat=False,shuffle=False)
+  print('using data yelp')
+  dataset = Yelp_Dataset(mbsize=mb_size,  repeat=False,shuffle=False)
   MODEL_DIR = 'models_yelp/'
   train_size = 443248
   val_size = 4000
-if args.data.lower() == 'amazon':
-  dataset = Amazon_Dataset(mbsize=mb_size)
-  MODEL_DIR = 'models_amazon/'
+  test_size = 1000
 
-# bert_word_embedding = torch.load(args.bert +"/"+ args.data.lower() +'_train_word.pt')
+if args.data.lower() == 'gab':
+  print('using data gab')
+  dataset = Gab_Dataset(mbsize=mb_size,  repeat=False,shuffle=False)
+  MODEL_DIR = 'models_gab/'
+  train_size = 35795
+  #train_size = 35800
+  val_size = 2000
+  test_size = 1000
+
+if args.data.lower() == 'family':
+  print('using data family')
+  dataset = Family_Dataset(mbsize=mb_size,  repeat=False,shuffle=False)
+  MODEL_DIR = 'models_family/'
+  train_size = 103934
+  val_size = 2351
+  test_size = 1000
+
+if args.data.lower() == 'music':
+  print('using data music')
+  dataset = Music_Dataset(mbsize=mb_size,  repeat=False,shuffle=False)
+  MODEL_DIR = 'models_music/'
+  train_size = 105188
+  val_size = 2000
+  test_size = 1000
+
+
 if with_bert:
-  bert_sentence_embedding = torch.load("../BERT/"+args.data+"_test_sentence.pt")
-  assert bert_sentence_embedding.size()[0] == test_size
+  bert_sentence_embedding = torch.load(".BERT/"+args.data.lower()+"_test.pt")
+  #assert bert_sentence_embedding.size()[0] == train_size
 
 flow = eval(args.flow)
 flows = [flow(dim=args.z_dim) for _ in range(args.flows)]
@@ -112,13 +139,11 @@ z_star_list = list()
 z_list = list()
 labels_list = list()
 inputs_list = list()
-
-# _count=10
+#'''
 for batch in dataset.test_iter:
   inputs, labels, indices = batch.text, batch.label, batch.index
   if args.gpu:
     inputs, labels, indices = inputs.cuda(), labels.cuda(), indices.cuda()
-  # dataset.next_validation_batch(args.gpu)
 
   if with_bert:
     sentence_embeddings = torch.stack(
@@ -127,14 +152,9 @@ for batch in dataset.test_iter:
         sentence_embeddings = sentence_embeddings.cuda()
   else:
     sentence_embeddings = None
-
-  mu, logvar, z, z_star, z_star_prior_logprob, z_star_log_det, recon_loss, recon_loss_f_c, \
-            recon_loss_f_s, kl_loss_z_prior,  z_decoded, z_log_det = \
-            model.forward(inputs, labels, bert_inputs=sentence_embeddings)
-
+  z, z_star, z_star_prior_logprob, z_star_log_det, recon_loss_f_c, recon_loss_f_s, z_decoded, z_log_det,kl_z_star = model.forward(inputs, labels, bert_inputs=sentence_embeddings, layer=2)
   z_star_list.extend(z_star.detach().cpu().numpy())
-  labels_list.extend([dataset.idx2label(int(label)) for label in labels.tolist()])
-  # labels_list.extend(labels)
+  labels_list.extend(labels)
 
   ## to get the sentence
   seq_len, mbsize = inputs.size()
@@ -146,10 +166,11 @@ for batch in dataset.test_iter:
   for i in range(len(lengths)):
     inputs_list.append(orig_sentences[i][1:lengths[i]])
 
+  # break
 
 z_star_ = np.array(z_star_list)
-# labels_list = torch.stack(labels_list, axis=0).detach().cpu().numpy()
-
+labels_list = torch.stack(labels_list, axis=0).detach().cpu().numpy()
+#'''
 
 m=-1
 # Estimate from the training data
@@ -203,17 +224,19 @@ for i in trange(num_samples):
     #sample_idxs = model.sample_sentence(mu, temp =0.1)
     pos_sentences.append(sampled_sentence)
 
-with open(os.path.join(args.save_dir,'original.txt'),'w') as f:
+os.makedirs(args.output_dir, exist_ok=True)
+np.savetxt(args.output_dir+'/labels1.txt', labels_list)
+with open(os.path.join(args.output_dir,'original.txt'),'w') as f:
   for sent in original_sentences:
     f.write(sent)
     f.write('\n')
 
-with open(os.path.join(args.save_dir,'neg_post.txt'),'w') as f:
+with open(os.path.join(args.output_dir,'neg_post.txt'),'w') as f:
   for sent in neg_sentences:
     f.write(sent)
     f.write('\n')
 
-with open(os.path.join(args.save_dir,'pos_post.txt'),'w') as f:
+with open(os.path.join(args.output_dir,'pos_post.txt'),'w') as f:
   for sent in pos_sentences:
     f.write(sent)
     f.write('\n')

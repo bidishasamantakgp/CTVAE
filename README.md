@@ -54,7 +54,7 @@ The directory `saved_${name}` contains the checkpoints:
 ## Sampling sentences from prior
 
 ### Command
-`python sample_prior.py --with_bert --save_dir saved_${name} --output_dir prior_output_${name} --z_dim 256 --z_dim_1 256`
+`python scripts/sample_prior.py --with_bert --save_dir saved_${name} --output_dir prior_output_${name} --z_dim 256 --z_dim_1 256`
 
 ###  Output
 The directory `prior_output_${name}` will store the following:
