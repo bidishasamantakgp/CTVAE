@@ -36,9 +36,9 @@ It has following files
 Run the following to create BERT embedding files required for the training process.
   ```bash
     mkdir ./BERT
-    python scripts/BERT.py .data/${name}/${name}/train/data.txt ./BERT/${name}_train.pt
-    python scripts/BERT.py .data/${name}/${name}/val/data.txt ./BERT/${name}_val.pt
-    python scripts/BERT.py .data/${name}/${name}/test/data.txt ./BERT/${name}_test.pt
+    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/train/data.txt ./BERT/${name}_train.pt
+    python scripts/BERT_embeeding_gpu.py .data/${name}/${name}/val/data.txt ./BERT/${name}_val.pt
+    python scripts/BERT_embedding_gpu.py .data/${name}/${name}/test/data.txt ./BERT/${name}_test.pt
   ```
 
 ## Training the model
@@ -46,7 +46,7 @@ Run the following to create BERT embedding files required for the training proce
 You can specify the parameters according to your design choices in `scripts/train_datasets.py`
 
 ### Command
-python scripts/train_datasets.py --with_bert --epochs 20 --data <name> --save_dir <output dir> --z_dim 256 --z_dim_1 256
+`python scripts/train_datasets.py --with_bert --epochs 20 --data <name> --save_dir <output dir> --z_dim 256 --z_dim_1 256`
 ###  Output
 The directory `saved_${name}` contains the checkpoints:
 - `vae.bin` stores the checkpoint state
@@ -66,7 +66,7 @@ The directory `prior_output_${name}` will store the following:
 
 ### Command
 - Please provide the values of `min_senti` and `max_senti` as achieved from the training data
-`python sample_post.py --with_bert --save_dir saved_${name} --output_dir post_output_${name} --z_dim 256 --z_dim_1 256`
+- `python sample_post.py --with_bert --save_dir saved_${name} --output_dir post_output_${name} --z_dim 256 --z_dim_1 256`
 
 ###  Output
 The directroy `post_output_${name}` will store the following:
@@ -80,7 +80,7 @@ The directroy `post_output_${name}` will store the following:
 
 ### Command
 - Please provide the values of `min_senti` and `max_senti` as achieved from the training data
-`python sample_interpolation.py --with_bert --save_dir saved_${name} --output_dir interpolated_output_${name} --z_dim 256 --z_dim_1 256`
+- `python sample_interpolation.py --with_bert --save_dir saved_${name} --output_dir interpolated_output_${name} --z_dim 256 --z_dim_1 256`
 
 ###  Output
 The directory `interpolated_output_${name}` will store the following:
